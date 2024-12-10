@@ -2,6 +2,7 @@ import SearchForm from "@/components/SearchForm";
 import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
 import { STARTUPS_QUERY } from "@/sanity/lib/queries";
 import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+import { auth } from "@/auth";
 
 export default async function Home({
   searchParams,
@@ -9,21 +10,11 @@ export default async function Home({
   searchParams: Promise<{ query?: string }>;
 }) {
   const query = (await searchParams).query;
-  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY });
+  const params = { search: query || null };
 
-  /* const posts = [
-    {
-      _createdAt: new Date(),
-      views: 55,
-      author: { id: 1, name: "Adrian" },
-      _id: 1,
-      description: "this is a description",
-      image:
-        "https://www.allaboutbirds.org/guide/assets/photo/311368611-480px.jpg",
-      category: "Robots",
-      title: "We Robots",
-    },
-  ]; */
+  const session = await auth();
+
+  const { data: posts } = await sanityFetch({ query: STARTUPS_QUERY, params });
 
   //console.log("All Environment Variables:", process.env);
 
